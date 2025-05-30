@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#8b4513">
     
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" id="manifest-link">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Coptic Learning">
@@ -1238,11 +1238,12 @@
     <div class="container">
         <div class="header">
             <h1><span class="coptic">ⲃⲟϩⲁⲓⲣⲓⲕⲟⲛ</span> • Bohairic Coptic</h1>
-            <p>Academic Vocabulary Learning System - PWA Edition</p>
+            <p>Academic Historical Lexicon - Enhanced PWA Edition</p>
             
             <div class="user-info" id="user-info">
                 <div class="user-name" id="user-name"></div>
                 <div class="user-role" id="user-role"></div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
             
             <div id="login-prompt" style="margin-top: 15px;">
@@ -1341,27 +1342,9 @@
                     <div class="flashcard-controls">
                         <select class="category-filter" id="flashcard-level-filter" onchange="filterFlashcards()">
                             <option value="">All Levels</option>
-                            <option value="1">Level 1 - Basic</option>
-                            <option value="2">Level 2 - Elementary</option>
-                            <option value="3">Level 3 - Intermediate</option>
-                            <option value="4">Level 4 - Intermediate-Advanced</option>
-                            <option value="5">Level 5 - Advanced</option>
-                            <option value="6">Level 6 - Expert</option>
                         </select>
                         <select class="category-filter" id="flashcard-category-filter" onchange="filterFlashcards()">
                             <option value="">All Categories</option>
-                            <option value="Religious">Religious</option>
-                            <option value="Basic">Basic</option>
-                            <option value="Grammar">Grammar</option>
-                            <option value="Body">Body</option>
-                            <option value="Nature">Nature</option>
-                            <option value="Numbers">Numbers</option>
-                            <option value="Time">Time</option>
-                            <option value="Food">Food</option>
-                            <option value="Animals">Animals</option>
-                            <option value="Places">Places</option>
-                            <option value="Abstract">Abstract</option>
-                            <option value="Verbs">Verbs</option>
                         </select>
                         <button class="btn-secondary tooltip" onclick="shuffleCards()">
                             🔀 Shuffle
@@ -1370,7 +1353,7 @@
                     </div>
                     
                     <div class="card-info">
-                        <span id="card-counter">Card 1 of 42</span> | 
+                        <span id="card-counter">Card 1 of 200</span> | 
                         <span id="current-category">All Categories</span> |
                         <span id="current-level">Level: Mixed</span>
                     </div>
@@ -1451,32 +1434,14 @@
                     <input type="text" class="search-box" placeholder="Search in Coptic or English..." id="search-input" oninput="filterVocab()">
                     <select class="category-filter" id="category-filter" onchange="filterVocab()">
                         <option value="">All Categories</option>
-                        <option value="Religious">Religious</option>
-                        <option value="Basic">Basic</option>
-                        <option value="Grammar">Grammar</option>
-                        <option value="Body">Body</option>
-                        <option value="Nature">Nature</option>
-                        <option value="Numbers">Numbers</option>
-                        <option value="Time">Time</option>
-                        <option value="Food">Food</option>
-                        <option value="Animals">Animals</option>
-                        <option value="Places">Places</option>
-                        <option value="Abstract">Abstract</option>
-                        <option value="Verbs">Verbs</option>
                     </select>
                     <select class="category-filter" id="level-filter" onchange="filterVocab()">
                         <option value="">All Levels</option>
-                        <option value="1">Level 1 - Basic</option>
-                        <option value="2">Level 2 - Elementary</option>
-                        <option value="3">Level 3 - Intermediate</option>
-                        <option value="4">Level 4 - Intermediate-Advanced</option>
-                        <option value="5">Level 5 - Advanced</option>
-                        <option value="6">Level 6 - Expert</option>
                     </select>
                 </div>
                 
                 <div style="text-align: center; color: #6c757d; margin-bottom: 20px;">
-                    Showing <span id="filtered-count">42</span> of <span id="total-vocab-count">42</span> entries
+                    Showing <span id="filtered-count">200</span> of <span id="total-vocab-count">200</span> entries
                 </div>
                 
                 <div class="vocab-grid" id="vocab-grid">
@@ -1492,7 +1457,7 @@
                         <div class="progress-fill" id="overall-progress" style="width: 0%"></div>
                     </div>
                     <p style="text-align: center; font-size: 1.1em;">
-                        <span id="learned-count">0</span> of <span id="total-count">42</span> words learned 
+                        <span id="learned-count">0</span> of <span id="total-count">200</span> words learned 
                         (<span id="progress-percent">0</span>%)
                     </p>
                 </div>
@@ -1531,7 +1496,7 @@
                     
                     <div class="export-import-section">
                         <h4>💾 Save & Load Your Progress</h4>
-                        <p><strong>Enhanced:</strong> Your data is now automatically saved using IndexedDB for persistent storage!</p>
+                        <p><strong>Enhanced:</strong> Your data is automatically saved using IndexedDB for persistent storage!</p>
                         
                         <div class="file-controls">
                             <button class="btn-primary" onclick="exportUserData()">📥 Export My Data</button>
@@ -1543,12 +1508,36 @@
                     
                     <div class="export-import-section">
                         <h4>📚 Vocabulary Management</h4>
+                        <p><strong>External JSON:</strong> This app loads vocabulary from: <code id="json-url">vocabulary.json</code></p>
                         <div class="file-controls">
                             <input type="file" id="vocab-file" accept=".json" class="file-input">
-                            <button class="btn-primary" onclick="loadVocabularyFile()">Load Vocabulary File</button>
-                            <button class="btn-secondary" onclick="loadSampleData()">Reset to Sample Data</button>
+                            <button class="btn-primary" onclick="loadVocabularyFile()">Load Custom Vocabulary</button>
+                            <button class="btn-secondary" onclick="loadSampleData()">Reload from JSON</button>
                         </div>
                         <div id="file-status" class="file-status"></div>
+                        
+                        <div style="background: #e8f5e9; border: 1px solid #4caf50; padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            <h5 style="color: #2e7d32; margin-bottom: 10px;">📄 JSON File Format</h5>
+                            <p style="color: #2e7d32; margin-bottom: 10px;">Your vocabulary JSON should be an array of objects:</p>
+                            <pre style="background: white; padding: 10px; border-radius: 5px; overflow-x: auto;">
+[
+  {
+    "coptic": "ⲁⲅⲁⲡⲏ",
+    "english": "love",
+    "category": "Religious",
+    "level": 3,
+    "etymology": "Greek",
+    "pos": "noun"
+  },
+  ...
+]</pre>
+                            <p style="color: #2e7d32; margin-top: 10px;"><strong>To use GitHub:</strong></p>
+                            <ol style="color: #2e7d32; margin-left: 20px;">
+                                <li>Upload vocabulary.json to your GitHub repo</li>
+                                <li>Click the "Raw" button on the file page</li>
+                                <li>Copy the URL and update VOCABULARY_JSON_URL in the code</li>
+                            </ol>
+                        </div>
                     </div>
                     
                     <div class="storage-info">
@@ -1562,20 +1551,42 @@
                     </div>
                     
                     <div class="data-stats" style="margin-top: 40px;">
-                        <h4>📊 Current Session Statistics</h4>
+                        <h4>📊 Current Vocabulary Statistics</h4>
                         <div class="stats">
                             <div class="stat-card">
-                                <div class="stat-number" id="total-entries">42</div>
+                                <div class="stat-number" id="total-entries">200</div>
                                 <div class="stat-label">Total Entries</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number" id="category-count">0</div>
+                                <div class="stat-label">Categories</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-number" id="level-distribution">6</div>
                                 <div class="stat-label">Difficulty Levels</div>
                             </div>
                             <div class="stat-card">
-                                <div class="stat-number" id="etymology-sources">2</div>
+                                <div class="stat-number" id="etymology-sources">4</div>
                                 <div class="stat-label">Etymology Sources</div>
                             </div>
+                        </div>
+                        <div style="margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <h5 style="color: #495057; margin-bottom: 10px;">📂 Loaded Categories:</h5>
+                            <div id="loaded-categories" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <!-- Categories will be populated here -->
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                            <h5 style="color: #495057; margin-bottom: 10px;">📈 Available Levels:</h5>
+                            <div id="loaded-levels" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <!-- Levels will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="data-stats" style="margin-top: 40px;">
+                        <h4>📊 Session Activity</h4>
+                        <div class="stats">
                             <div class="stat-card">
                                 <div class="stat-number" id="session-time">0</div>
                                 <div class="stat-label">Minutes This Session</div>
@@ -1601,69 +1612,226 @@
     </div>
 
     <script>
+        // Configuration
+        const VOCABULARY_JSON_URL = 'vocabulary.json'; // Change this to your GitHub raw URL
+        // Example: 'https://raw.githubusercontent.com/yourusername/yourrepo/main/vocabulary.json'
+        // To use GitHub: 
+        // 1. Upload your vocabulary.json to your GitHub repository
+        // 2. Navigate to the file on GitHub
+        // 3. Click "Raw" button
+        // 4. Copy the URL and replace 'vocabulary.json' above
+        
         // Database and PWA Configuration
         const DB_NAME = 'CopticLearningDB';
-        const DB_VERSION = 1;
+        const DB_VERSION = 3;
         let db = null;
         let deferredPrompt = null;
+        let useLocalStorage = false; // Fallback flag
+        
+        // Available categories and levels (will be populated from JSON)
+        let availableCategories = new Set();
+        let availableLevels = new Set();
 
-        // Enhanced Vocabulary Database
-        const defaultVocabulary = [
-            // Level 1 - Basic/Elementary
-            {coptic: "ⲁ", english: "letter A", category: "Grammar", level: 1, etymology: "native", pos: "noun"},
-            {coptic: "ⲁ", english: "one", category: "Numbers", level: 1, etymology: "native", pos: "numeral"},
+        // Load vocabulary from external JSON
+        async function loadVocabularyFromJSON() {
+            try {
+                console.log('Loading vocabulary from JSON...');
+                showSyncStatus('Loading vocabulary...', 'syncing');
+                
+                // Try to fetch from the URL
+                const response = await fetch(VOCABULARY_JSON_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid vocabulary format - expected an array');
+                }
+                
+                // Validate and clean the data
+                const validatedVocab = data.filter(item => 
+                    item.coptic && 
+                    item.english && 
+                    item.category && 
+                    item.level
+                );
+                
+                if (validatedVocab.length === 0) {
+                    throw new Error('No valid vocabulary entries found');
+                }
+                
+                console.log(`Loaded ${validatedVocab.length} vocabulary entries from JSON`);
+                showSyncStatus(`Loaded ${validatedVocab.length} entries`, 'success');
+                
+                return validatedVocab;
+            } catch (error) {
+                console.error('Error loading vocabulary JSON:', error);
+                showFileStatus(`Error loading vocabulary: ${error.message}`, 'error');
+                
+                // If loading fails, try localStorage backup
+                const backupVocab = localStorage.getItem('coptic_vocabulary_backup');
+                if (backupVocab) {
+                    console.log('Using backup vocabulary from localStorage');
+                    return JSON.parse(backupVocab);
+                }
+                
+                // Fall back to default vocabulary
+                console.log('Falling back to default vocabulary');
+                return defaultVocabulary;
+            }
+        }
+        
+        // Update dropdowns with actual categories and levels from data
+        function updateDropdowns() {
+            // Clear existing sets
+            availableCategories.clear();
+            availableLevels.clear();
+            
+            // Collect unique categories and levels
+            vocabulary.forEach(word => {
+                if (word.category) availableCategories.add(word.category);
+                if (word.level) availableLevels.add(word.level);
+            });
+            
+            // Convert to sorted arrays
+            const categoriesArray = Array.from(availableCategories).sort();
+            const levelsArray = Array.from(availableLevels).sort((a, b) => a - b);
+            
+            // Update flashcard category dropdown
+            const flashcardCategorySelect = document.getElementById('flashcard-category-filter');
+            if (flashcardCategorySelect) {
+                const currentValue = flashcardCategorySelect.value;
+                flashcardCategorySelect.innerHTML = '<option value="">All Categories</option>';
+                categoriesArray.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    flashcardCategorySelect.appendChild(option);
+                });
+                flashcardCategorySelect.value = currentValue;
+            }
+            
+            // Update flashcard level dropdown
+            const flashcardLevelSelect = document.getElementById('flashcard-level-filter');
+            if (flashcardLevelSelect) {
+                const currentValue = flashcardLevelSelect.value;
+                flashcardLevelSelect.innerHTML = '<option value="">All Levels</option>';
+                levelsArray.forEach(level => {
+                    const option = document.createElement('option');
+                    option.value = level;
+                    option.textContent = `Level ${level}`;
+                    flashcardLevelSelect.appendChild(option);
+                });
+                flashcardLevelSelect.value = currentValue;
+            }
+            
+            // Update browse category dropdown
+            const browseCategorySelect = document.getElementById('category-filter');
+            if (browseCategorySelect) {
+                const currentValue = browseCategorySelect.value;
+                browseCategorySelect.innerHTML = '<option value="">All Categories</option>';
+                categoriesArray.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    browseCategorySelect.appendChild(option);
+                });
+                browseCategorySelect.value = currentValue;
+            }
+            
+            // Update browse level dropdown
+            const browseLevelSelect = document.getElementById('level-filter');
+            if (browseLevelSelect) {
+                const currentValue = browseLevelSelect.value;
+                browseLevelSelect.innerHTML = '<option value="">All Levels</option>';
+                levelsArray.forEach(level => {
+                    const option = document.createElement('option');
+                    option.value = level;
+                    option.textContent = `Level ${level}`;
+                    browseLevelSelect.appendChild(option);
+                });
+                browseLevelSelect.value = currentValue;
+            }
+            
+            console.log(`Updated dropdowns: ${categoriesArray.length} categories, ${levelsArray.length} levels`);
+        }
+            // Letters
+            {coptic: "ⲁ", english: "letter A/one", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲃ", english: "letter B/two", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲅ", english: "letter G/three", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲇ", english: "letter D/four", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲉ", english: "letter E/five", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲋ", english: "letter F/six", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲍ", english: "letter Z/seven", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲏ", english: "letter H/eight", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲑ", english: "letter Th/nine", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲓ", english: "letter I/ten", category: "Letters", level: 1, etymology: "native", pos: "noun"},
+            
+            // Core vocabulary
             {coptic: "ⲁⲙⲟⲩ", english: "come!", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
             {coptic: "ⲁⲛⲟⲕ", english: "I", category: "Grammar", level: 1, etymology: "native", pos: "pronoun"},
-            {coptic: "ⲁϩⲉ", english: "head", category: "Body", level: 1, etymology: "native", pos: "noun"},
-            {coptic: "ⲁϩⲁ", english: "yes", category: "Basic", level: 1, etymology: "native", pos: "interjection"},
-            {coptic: "ⲙⲙⲟⲛ", english: "no", category: "Basic", level: 1, etymology: "native", pos: "interjection"},
-            
-            // Level 2 - Elementary
-            {coptic: "ⲁ", english: "thousand", category: "Numbers", level: 2, etymology: "native", pos: "numeral"},
-            {coptic: "ⲁⲃⲟⲧ", english: "month", category: "Time", level: 2, etymology: "native", pos: "noun"},
-            {coptic: "ⲁⲅⲁⲑⲟⲥ", english: "good", category: "Basic", level: 2, etymology: "Greek", pos: "adjective"},
-            {coptic: "ⲁⲗⲱⲗⲓ", english: "grape", category: "Food", level: 2, etymology: "native", pos: "noun"},
-            {coptic: "ⲁⲛⲑⲣⲱⲡⲟⲥ", english: "human", category: "Basic", level: 2, etymology: "Greek", pos: "noun"},
-            {coptic: "ⲁϣ", english: "who/what", category: "Grammar", level: 2, etymology: "native", pos: "pronoun"},
-            {coptic: "ⲁϥ", english: "flesh/meat", category: "Body", level: 2, etymology: "native", pos: "noun"},
-            
-            // Level 3 - Intermediate
-            {coptic: "ⲁⲃⲃⲁ", english: "father/abbot", category: "Religious", level: 3, etymology: "Greek", pos: "noun"},
-            {coptic: "ⲁⲃⲱⲕ", english: "crow", category: "Animals", level: 3, etymology: "native", pos: "noun"},
-            {coptic: "ⲁⲅⲅⲉⲗⲟⲥ", english: "angel", category: "Religious", level: 3, etymology: "Greek", pos: "noun"},
-            {coptic: "ⲁⲅⲓⲟⲥ", english: "holy/saint", category: "Religious", level: 3, etymology: "Greek", pos: "adjective"},
-            {coptic: "ⲁⲗⲟⲩ", english: "youth", category: "Basic", level: 3, etymology: "native", pos: "noun"},
-            {coptic: "ⲉⲓⲣⲏⲛⲏ", english: "peace", category: "Religious", level: 3, etymology: "Greek", pos: "noun"},
-            
-            // Level 4 - Intermediate-Advanced
-            {coptic: "ⲁ-", english: "verbal prefix", category: "Grammar", level: 4, etymology: "native", pos: "prefix"},
-            {coptic: "ⲁⲅⲁⲡⲏ", english: "love", category: "Religious", level: 4, etymology: "Greek", pos: "noun"},
-            {coptic: "ⲁⲅⲱⲣⲁ", english: "marketplace", category: "Places", level: 4, etymology: "Greek", pos: "noun"},
-            {coptic: "ⲁⲡⲟⲥⲧⲟⲗⲟⲥ", english: "apostle", category: "Religious", level: 4, etymology: "Greek", pos: "noun"},
-            
-            // Level 5 - Advanced
-            {coptic: "ⲁⲅⲣⲓⲟⲥ", english: "wild", category: "Basic", level: 5, etymology: "Greek", pos: "adjective"},
-            
-            // Level 6 - Expert
-            {coptic: "ⲁⲅⲱⲛ", english: "agony/struggle", category: "Abstract", level: 6, etymology: "Greek", pos: "noun"},
-            
-            // Additional common vocabulary
-            {coptic: "ⲑⲉⲟⲥ", english: "God", category: "Religious", level: 2, etymology: "Greek", pos: "noun"},
-            {coptic: "ⲉⲕⲕⲗⲏⲥⲓⲁ", english: "church", category: "Religious", level: 3, etymology: "Greek", pos: "noun"},
             {coptic: "ⲛⲑⲟⲕ", english: "you (m.)", category: "Grammar", level: 1, etymology: "native", pos: "pronoun"},
             {coptic: "ⲛⲑⲟ", english: "you (f.)", category: "Grammar", level: 1, etymology: "native", pos: "pronoun"},
             {coptic: "ⲁⲛⲟⲛ", english: "we", category: "Grammar", level: 1, etymology: "native", pos: "pronoun"},
             {coptic: "ⲡⲉ", english: "the (m.)", category: "Grammar", level: 1, etymology: "native", pos: "article"},
             {coptic: "ⲧⲉ", english: "the (f.)", category: "Grammar", level: 1, etymology: "native", pos: "article"},
             {coptic: "ⲛⲉ", english: "the (pl.)", category: "Grammar", level: 1, etymology: "native", pos: "article"},
+            {coptic: "ⲁϩⲁ", english: "yes", category: "Basic", level: 1, etymology: "native", pos: "interjection"},
+            {coptic: "ⲙⲙⲟⲛ", english: "no", category: "Basic", level: 1, etymology: "native", pos: "interjection"},
+            
+            // Body parts
+            {coptic: "ⲁϩⲉ", english: "head", category: "Body", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲃⲁⲗ", english: "eye", category: "Body", level: 1, etymology: "native", pos: "noun"},
             {coptic: "ϩⲏⲧ", english: "heart", category: "Body", level: 2, etymology: "native", pos: "noun"},
+            {coptic: "ⲁϥ", english: "flesh/meat", category: "Body", level: 2, etymology: "native", pos: "noun"},
+            
+            // Nature and environment
             {coptic: "ⲙⲱⲟⲩ", english: "water", category: "Nature", level: 1, etymology: "native", pos: "noun"},
             {coptic: "ⲣⲏ", english: "sun", category: "Nature", level: 1, etymology: "native", pos: "noun"},
             {coptic: "ⲓⲱϩ", english: "moon", category: "Nature", level: 2, etymology: "native", pos: "noun"},
             {coptic: "ⲫⲟⲩⲱⲓⲛⲓ", english: "light", category: "Nature", level: 2, etymology: "native", pos: "noun"},
             {coptic: "ⲭⲁⲕⲓ", english: "darkness", category: "Nature", level: 2, etymology: "native", pos: "noun"},
+            
+            // Religious terms
+            {coptic: "ⲑⲉⲟⲥ", english: "God", category: "Religious", level: 2, etymology: "Greek", pos: "noun"},
+            {coptic: "ⲁⲅⲁⲡⲏ", english: "love", category: "Religious", level: 3, etymology: "Greek", pos: "noun"},
+            {coptic: "ⲉⲕⲕⲗⲏⲥⲓⲁ", english: "church", category: "Religious", level: 3, etymology: "Greek", pos: "noun"},
+            
+            // Basic concepts
             {coptic: "ⲱⲛϧ", english: "life", category: "Abstract", level: 2, etymology: "native", pos: "noun"},
-            {coptic: "ⲙⲟⲩ", english: "death", category: "Abstract", level: 2, etymology: "native", pos: "noun"}
+            {coptic: "ⲙⲟⲩ", english: "death", category: "Abstract", level: 2, etymology: "native", pos: "noun"},
+            {coptic: "ⲛⲁⲛⲉⲩ", english: "good/beautiful", category: "Basic", level: 2, etymology: "native", pos: "adjective"},
+            {coptic: "ⲃⲉⲣⲓ", english: "new/young", category: "Basic", level: 1, etymology: "native", pos: "adjective"},
+            
+            // Common verbs
+            {coptic: "ⲱⲛϧ", english: "to live", category: "Verbs", level: 2, etymology: "native", pos: "verb"},
+            {coptic: "ⲙⲟⲩ", english: "to die", category: "Verbs", level: 2, etymology: "native", pos: "verb"},
+            {coptic: "ⲟⲩⲱⲙ", english: "to eat", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            {coptic: "ⲥⲱ", english: "to drink", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            {coptic: "ⲃⲱⲕ", english: "to go", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            {coptic: "ⲉⲓ", english: "to come", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            {coptic: "ⲛⲁⲩ", english: "to see", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            {coptic: "ⲥⲱⲧⲉⲙ", english: "to hear", category: "Verbs", level: 2, etymology: "native", pos: "verb"},
+            {coptic: "ϯ", english: "to give", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            {coptic: "ϫⲓ", english: "to take", category: "Verbs", level: 1, etymology: "native", pos: "verb"},
+            
+            // Family
+            {coptic: "ⲓⲱⲧ", english: "father", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲙⲁⲩ", english: "mother", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ϣⲏⲣⲓ", english: "son", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ϣⲉⲉⲣⲉ", english: "daughter", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲥⲟⲛ", english: "brother", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲥⲱⲛⲓ", english: "sister", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            
+            // More vocabulary entries...
+            {coptic: "ⲣⲱⲙⲓ", english: "man/person", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲥϩⲓⲙⲓ", english: "woman", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ⲁⲗⲟⲩ", english: "child", category: "Basic", level: 1, etymology: "native", pos: "noun"},
+            {coptic: "ϧⲉⲗⲗⲟ", english: "old man", category: "Basic", level: 2, etymology: "native", pos: "noun"},
+            {coptic: "ϧⲉⲗⲗⲱ", english: "old woman", category: "Basic", level: 2, etymology: "native", pos: "noun"}
         ];
 
         // App State
@@ -1686,151 +1854,382 @@
         let currentUser = null;
         let userProfiles = {};
 
-        // IndexedDB Setup
+        // Default demo accounts
+        const demoAccounts = {
+            'scholar@coptic.edu': {
+                name: 'Dr. Sarah Scholar',
+                email: 'scholar@coptic.edu',
+                password: 'coptic123',
+                role: 'researcher',
+                studiedCards: [],
+                learnedCards: [],
+                progress: {
+                    correctAnswers: 0,
+                    totalQuestions: 0,
+                    studyStreak: 0,
+                    preferredLevel: 4
+                },
+                createdAt: new Date().toISOString()
+            },
+            'student@uni.edu': {
+                name: 'Alex Student',
+                email: 'student@uni.edu',
+                password: 'student456',
+                role: 'student',
+                studiedCards: [],
+                learnedCards: [],
+                progress: {
+                    correctAnswers: 0,
+                    totalQuestions: 0,
+                    studyStreak: 0,
+                    preferredLevel: 2
+                },
+                createdAt: new Date().toISOString()
+            }
+        };
+
+        // Storage Setup with Fallback
         async function initDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
+            try {
+                // First check if we can use IndexedDB
+                if (!window.indexedDB) {
+                    throw new Error('IndexedDB not supported');
+                }
                 
-                request.onerror = () => {
-                    console.error('Database failed to open');
-                    reject(request.error);
-                };
-                
-                request.onsuccess = () => {
-                    db = request.result;
-                    console.log('Database opened successfully');
-                    resolve(db);
-                };
-                
-                request.onupgradeneeded = (event) => {
-                    db = event.target.result;
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(DB_NAME, DB_VERSION);
                     
-                    // Create object stores
-                    if (!db.objectStoreNames.contains('vocabulary')) {
+                    request.onerror = () => {
+                        console.error('Database failed to open:', request.error);
+                        reject(request.error);
+                    };
+                    
+                    request.onsuccess = () => {
+                        db = request.result;
+                        console.log('Database opened successfully');
+                        useLocalStorage = false;
+                        resolve(db);
+                    };
+                    
+                    request.onupgradeneeded = (event) => {
+                        db = event.target.result;
+                        console.log('Upgrading database from version', event.oldVersion, 'to', event.newVersion);
+                        
+                        // Clear existing stores if they exist (for clean upgrade)
+                        if (event.oldVersion > 0) {
+                            if (db.objectStoreNames.contains('vocabulary')) {
+                                db.deleteObjectStore('vocabulary');
+                            }
+                            if (db.objectStoreNames.contains('users')) {
+                                db.deleteObjectStore('users');
+                            }
+                            if (db.objectStoreNames.contains('progress')) {
+                                db.deleteObjectStore('progress');
+                            }
+                            if (db.objectStoreNames.contains('settings')) {
+                                db.deleteObjectStore('settings');
+                            }
+                        }
+                        
+                        // Create object stores
                         const vocabStore = db.createObjectStore('vocabulary', { keyPath: 'id', autoIncrement: true });
                         vocabStore.createIndex('coptic', 'coptic', { unique: false });
                         vocabStore.createIndex('category', 'category', { unique: false });
                         vocabStore.createIndex('level', 'level', { unique: false });
-                    }
-                    
-                    if (!db.objectStoreNames.contains('users')) {
+                        
                         const userStore = db.createObjectStore('users', { keyPath: 'email' });
                         userStore.createIndex('name', 'name', { unique: false });
-                    }
-                    
-                    if (!db.objectStoreNames.contains('progress')) {
+                        
                         const progressStore = db.createObjectStore('progress', { keyPath: 'id', autoIncrement: true });
                         progressStore.createIndex('userId', 'userId', { unique: false });
                         progressStore.createIndex('timestamp', 'timestamp', { unique: false });
-                    }
-                    
-                    if (!db.objectStoreNames.contains('settings')) {
+                        
                         db.createObjectStore('settings', { keyPath: 'key' });
-                    }
-                };
-            });
+                    };
+                });
+            } catch (error) {
+                console.warn('IndexedDB not available, falling back to localStorage:', error);
+                useLocalStorage = true;
+                
+                // Show a notice to the user
+                showFileStatus('Using localStorage fallback. For full features, please run from a web server.', 'info');
+                
+                return null;
+            }
         }
 
-        // Database Operations
+        // LocalStorage fallback functions
+        function getLocalStorageKey(storeName, key) {
+            return `coptic_${storeName}_${key || 'all'}`;
+        }
+
+        function saveToLocalStorage(storeName, data) {
+            try {
+                const key = data.email || data.key || data.id || storeName;
+                localStorage.setItem(getLocalStorageKey(storeName, key), JSON.stringify(data));
+                return Promise.resolve(key);
+            } catch (error) {
+                console.error('LocalStorage save error:', error);
+                return Promise.reject(error);
+            }
+        }
+
+        function getFromLocalStorage(storeName, key) {
+            try {
+                const data = localStorage.getItem(getLocalStorageKey(storeName, key));
+                return Promise.resolve(data ? JSON.parse(data) : null);
+            } catch (error) {
+                console.error('LocalStorage get error:', error);
+                return Promise.resolve(null);
+            }
+        }
+
+        function getAllFromLocalStorage(storeName) {
+            try {
+                const prefix = `coptic_${storeName}_`;
+                const items = [];
+                
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith(prefix) && !key.endsWith('_all')) {
+                        const data = localStorage.getItem(key);
+                        if (data) {
+                            items.push(JSON.parse(data));
+                        }
+                    }
+                }
+                
+                return Promise.resolve(items);
+            } catch (error) {
+                console.error('LocalStorage getAll error:', error);
+                return Promise.resolve([]);
+            }
+        }
+
+        function deleteFromLocalStorage(storeName, key) {
+            try {
+                localStorage.removeItem(getLocalStorageKey(storeName, key));
+                return Promise.resolve();
+            } catch (error) {
+                console.error('LocalStorage delete error:', error);
+                return Promise.reject(error);
+            }
+        }
+
+        // Database Operations with Fallback
         async function saveToIndexedDB(storeName, data) {
-            const transaction = db.transaction([storeName], 'readwrite');
-            const store = transaction.objectStore(storeName);
+            if (useLocalStorage) {
+                return saveToLocalStorage(storeName, data);
+            }
             
-            return new Promise((resolve, reject) => {
-                const request = store.put(data);
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
+            if (!db) {
+                console.error('Database not initialized');
+                return Promise.reject('Database not initialized');
+            }
+            
+            try {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                
+                return new Promise((resolve, reject) => {
+                    const request = store.put(data);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            } catch (error) {
+                console.error('Error in saveToIndexedDB:', error);
+                return Promise.reject(error);
+            }
         }
 
         async function getFromIndexedDB(storeName, key) {
-            const transaction = db.transaction([storeName], 'readonly');
-            const store = transaction.objectStore(storeName);
+            if (useLocalStorage) {
+                return getFromLocalStorage(storeName, key);
+            }
             
-            return new Promise((resolve, reject) => {
-                const request = store.get(key);
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
+            if (!db) return null;
+            
+            try {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                
+                return new Promise((resolve, reject) => {
+                    const request = store.get(key);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            } catch (error) {
+                console.error('Error in getFromIndexedDB:', error);
+                return null;
+            }
         }
 
         async function getAllFromIndexedDB(storeName) {
-            const transaction = db.transaction([storeName], 'readonly');
-            const store = transaction.objectStore(storeName);
+            if (useLocalStorage) {
+                return getAllFromLocalStorage(storeName);
+            }
             
-            return new Promise((resolve, reject) => {
-                const request = store.getAll();
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
+            if (!db) return [];
+            
+            try {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                
+                return new Promise((resolve, reject) => {
+                    const request = store.getAll();
+                    request.onsuccess = () => resolve(request.result || []);
+                    request.onerror = () => reject(request.error);
+                });
+            } catch (error) {
+                console.error('Error in getAllFromIndexedDB:', error);
+                return [];
+            }
         }
 
         async function deleteFromIndexedDB(storeName, key) {
-            const transaction = db.transaction([storeName], 'readwrite');
-            const store = transaction.objectStore(storeName);
+            if (useLocalStorage) {
+                return deleteFromLocalStorage(storeName, key);
+            }
             
-            return new Promise((resolve, reject) => {
-                const request = store.delete(key);
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
+            if (!db) return;
+            
+            try {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                
+                return new Promise((resolve, reject) => {
+                    const request = store.delete(key);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject(request.error);
+                });
+            } catch (error) {
+                console.error('Error in deleteFromIndexedDB:', error);
+            }
         }
 
-        // Load data from IndexedDB
+        // Load data from storage
         async function loadDataFromDB() {
             try {
                 showSyncStatus('Loading data...', 'syncing');
                 
-                // Load vocabulary
-                const vocabData = await getAllFromIndexedDB('vocabulary');
-                if (vocabData && vocabData.length > 0) {
-                    vocabulary = vocabData;
-                    filteredVocab = [...vocabulary];
+                // First try to load vocabulary from external JSON
+                const jsonVocabulary = await loadVocabularyFromJSON();
+                vocabulary = jsonVocabulary;
+                filteredVocab = [...vocabulary];
+                
+                // Save a backup to localStorage
+                try {
+                    localStorage.setItem('coptic_vocabulary_backup', JSON.stringify(vocabulary));
+                } catch (e) {
+                    console.warn('Could not save vocabulary backup:', e);
+                }
+                
+                // Update dropdowns with actual categories and levels
+                updateDropdowns();
+                
+                // Check if we have saved custom vocabulary in storage
+                if (useLocalStorage) {
+                    const customVocabData = localStorage.getItem('coptic_vocabulary_custom');
+                    if (customVocabData) {
+                        const customVocab = JSON.parse(customVocabData);
+                        if (customVocab && customVocab.length > 0) {
+                            vocabulary = customVocab;
+                            filteredVocab = [...vocabulary];
+                            console.log('Using custom vocabulary from localStorage');
+                            updateDropdowns();
+                        }
+                    }
+                } else {
+                    const vocabData = await getAllFromIndexedDB('vocabulary');
+                    if (vocabData && vocabData.length > 0 && vocabData[0].isCustom) {
+                        vocabulary = vocabData;
+                        filteredVocab = [...vocabulary];
+                        console.log('Using custom vocabulary from IndexedDB');
+                        updateDropdowns();
+                    }
                 }
                 
                 // Load users
                 const usersData = await getAllFromIndexedDB('users');
-                if (usersData) {
+                if (usersData && usersData.length > 0) {
                     userProfiles = {};
                     usersData.forEach(user => {
                         userProfiles[user.email] = user;
                     });
+                    console.log('Loaded', usersData.length, 'users from storage');
+                } else {
+                    // Initialize with demo accounts
+                    userProfiles = { ...demoAccounts };
+                    console.log('No users in storage, using demo accounts');
                 }
                 
                 // Load settings
                 const lastUserSetting = await getFromIndexedDB('settings', 'lastUser');
-                if (lastUserSetting && lastUserSetting.value) {
-                    const savedUser = userProfiles[lastUserSetting.value];
-                    if (savedUser) {
-                        currentUser = savedUser;
-                        await loadUserProgress();
-                    }
+                if (lastUserSetting && lastUserSetting.value && userProfiles[lastUserSetting.value]) {
+                    currentUser = userProfiles[lastUserSetting.value];
+                    console.log('Restored user session:', currentUser.name);
+                    await loadUserProgress();
                 }
                 
                 showSyncStatus('Data loaded successfully', 'success');
             } catch (error) {
                 console.error('Error loading data:', error);
                 showSyncStatus('Error loading data', 'error');
+                // Initialize with defaults on error
+                vocabulary = [...defaultVocabulary];
+                filteredVocab = [...vocabulary];
+                userProfiles = { ...demoAccounts };
+                updateDropdowns();
             }
         }
 
-        // Save vocabulary to IndexedDB
-        async function saveVocabularyToDB() {
-            const transaction = db.transaction(['vocabulary'], 'readwrite');
-            const store = transaction.objectStore('vocabulary');
+        // Save vocabulary to storage
+        async function saveVocabularyToDB(isCustom = false) {
+            if (useLocalStorage) {
+                try {
+                    // Save vocabulary with custom flag
+                    if (isCustom) {
+                        localStorage.setItem('coptic_vocabulary_custom', JSON.stringify(vocabulary));
+                    } else {
+                        localStorage.setItem('coptic_vocabulary_all', JSON.stringify(vocabulary));
+                    }
+                    console.log('Saved', vocabulary.length, 'vocabulary entries to localStorage');
+                } catch (error) {
+                    console.error('Error saving vocabulary to localStorage:', error);
+                }
+                return;
+            }
             
-            // Clear existing vocabulary
-            await store.clear();
+            if (!db) {
+                console.error('Database not initialized');
+                return;
+            }
             
-            // Add new vocabulary with IDs
-            vocabulary.forEach((word, index) => {
-                store.put({ ...word, id: index + 1 });
-            });
-            
-            return new Promise((resolve, reject) => {
-                transaction.oncomplete = () => resolve();
-                transaction.onerror = () => reject(transaction.error);
-            });
+            try {
+                const transaction = db.transaction(['vocabulary'], 'readwrite');
+                const store = transaction.objectStore('vocabulary');
+                
+                // Clear existing vocabulary
+                await new Promise((resolve, reject) => {
+                    const clearRequest = store.clear();
+                    clearRequest.onsuccess = () => resolve();
+                    clearRequest.onerror = () => reject(clearRequest.error);
+                });
+                
+                // Add new vocabulary with IDs and custom flag
+                const promises = vocabulary.map((word, index) => {
+                    return new Promise((resolve, reject) => {
+                        const addRequest = store.put({ ...word, id: index + 1, isCustom });
+                        addRequest.onsuccess = () => resolve();
+                        addRequest.onerror = () => reject(addRequest.error);
+                    });
+                });
+                
+                await Promise.all(promises);
+                console.log('Saved', vocabulary.length, 'vocabulary entries to DB');
+            } catch (error) {
+                console.error('Error saving vocabulary to DB:', error);
+            }
         }
 
         // Save user progress
@@ -1844,9 +2243,9 @@
                 currentUser.studiedCards = Array.from(studiedCards);
                 currentUser.learnedCards = Array.from(learnedCards);
                 currentUser.progress = {
+                    ...currentUser.progress,
                     correctAnswers: correctAnswers,
                     totalQuestions: totalQuestions,
-                    studyStreak: currentUser.progress?.studyStreak || 0,
                     lastStudied: new Date().toISOString()
                 };
                 
@@ -1864,6 +2263,7 @@
                 await saveToIndexedDB('progress', progressEntry);
                 
                 showSyncStatus('Progress saved', 'success');
+                console.log('Progress saved for user:', currentUser.name);
             } catch (error) {
                 console.error('Error saving progress:', error);
                 showSyncStatus('Error saving progress', 'error');
@@ -1874,12 +2274,23 @@
         async function loadUserProgress() {
             if (!currentUser) return;
             
-            studiedCards = new Set(currentUser.studiedCards || []);
-            learnedCards = new Set(currentUser.learnedCards || []);
-            correctAnswers = currentUser.progress?.correctAnswers || 0;
-            totalQuestions = currentUser.progress?.totalQuestions || 0;
-            
-            updateProgress();
+            try {
+                studiedCards = new Set(currentUser.studiedCards || []);
+                learnedCards = new Set(currentUser.learnedCards || []);
+                correctAnswers = currentUser.progress?.correctAnswers || 0;
+                totalQuestions = currentUser.progress?.totalQuestions || 0;
+                
+                console.log('Loaded progress for user:', currentUser.name, {
+                    studied: studiedCards.size,
+                    learned: learnedCards.size,
+                    quiz: `${correctAnswers}/${totalQuestions}`
+                });
+                
+                updateProgress();
+                updateUI();
+            } catch (error) {
+                console.error('Error loading user progress:', error);
+            }
         }
 
         // PWA Install Handling
@@ -1887,35 +2298,85 @@
             e.preventDefault();
             deferredPrompt = e;
             
-            // Show install banner
             const installBanner = document.getElementById('install-banner');
-            installBanner.style.display = 'block';
+            if (installBanner) {
+                installBanner.style.display = 'block';
+            }
         });
 
-        document.getElementById('install-btn').addEventListener('click', async () => {
-            if (!deferredPrompt) return;
+        // Event listeners for install banner
+        function setupInstallListeners() {
+            const installBtn = document.getElementById('install-btn');
+            const dismissBtn = document.getElementById('dismiss-install');
             
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            
-            if (outcome === 'accepted') {
-                console.log('PWA installed');
-                showFileStatus('App installed successfully!', 'success');
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (!deferredPrompt) return;
+                    
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('PWA installed');
+                        showFileStatus('App installed successfully!', 'success');
+                    }
+                    
+                    deferredPrompt = null;
+                    const installBanner = document.getElementById('install-banner');
+                    if (installBanner) {
+                        installBanner.style.display = 'none';
+                    }
+                });
             }
             
-            deferredPrompt = null;
-            document.getElementById('install-banner').style.display = 'none';
-        });
-
-        document.getElementById('dismiss-install').addEventListener('click', () => {
-            document.getElementById('install-banner').style.display = 'none';
-        });
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', () => {
+                    const installBanner = document.getElementById('install-banner');
+                    if (installBanner) {
+                        installBanner.style.display = 'none';
+                    }
+                });
+            }
+        }
 
         // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', async () => {
                 try {
-                    const registration = await navigator.serviceWorker.register('./sw.js');
+                    const swCode = `
+                        const CACHE_NAME = 'coptic-learning-v3';
+                        const urlsToCache = [
+                            './',
+                            'https://github.com/CopticScriptorium/coptic-nlp/raw/refs/heads/master/antinoou-webfont.ttf'
+                        ];
+                        
+                        self.addEventListener('install', event => {
+                            console.log('Service Worker installing');
+                            event.waitUntil(
+                                caches.open(CACHE_NAME)
+                                    .then(cache => cache.addAll(urlsToCache))
+                            );
+                        });
+                        
+                        self.addEventListener('fetch', event => {
+                            event.respondWith(
+                                caches.match(event.request)
+                                    .then(response => {
+                                        if (response) {
+                                            return response;
+                                        }
+                                        return fetch(event.request);
+                                    })
+                            );
+                        });
+                        
+                        self.addEventListener('activate', event => {
+                            console.log('Service Worker activating');
+                        });
+                    `;
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    const registration = await navigator.serviceWorker.register(swUrl);
                     console.log('ServiceWorker registered:', registration);
                 } catch (error) {
                     console.log('ServiceWorker registration failed:', error);
@@ -1926,9 +2387,9 @@
         // Online/Offline Detection
         function updateOnlineStatus() {
             const indicator = document.getElementById('offline-indicator');
-            if (!navigator.onLine) {
+            if (!navigator.onLine && indicator) {
                 indicator.classList.add('show');
-            } else {
+            } else if (indicator) {
                 indicator.classList.remove('show');
             }
         }
@@ -1941,6 +2402,8 @@
             const syncStatus = document.getElementById('sync-status');
             const syncMessage = document.getElementById('sync-message');
             
+            if (!syncStatus || !syncMessage) return;
+            
             syncStatus.className = `sync-status show ${type}`;
             syncMessage.textContent = message;
             
@@ -1951,646 +2414,287 @@
             }
         }
 
-        // Initialize App
-        async function initApp() {
-            try {
-                // Initialize IndexedDB
-                await initDB();
-                
-                // Load data from IndexedDB
-                await loadDataFromDB();
-                
-                // If no vocabulary in DB, save default
-                if (vocabulary.length === 0) {
-                    vocabulary = [...defaultVocabulary];
-                    await saveVocabularyToDB();
-                }
-                
-                filteredVocab = [...vocabulary];
-                currentCardIndex = 0;
-                
-                // Set up button event listeners
-                setupEventListeners();
-                
-                // Update UI
-                updateUserInterface();
-                
-                // Initialize tabs
-                showTab('flashcards');
-                
-                updateFlashcard();
-                generateQuizQuestions();
-                populateBrowse();
-                updateProgress();
-                updateDataStats();
-                drawActivityChart();
-                updateStorageInfo();
-                
-                // Check online status
-                updateOnlineStatus();
-                
-            } catch (error) {
-                console.error('Failed to initialize app:', error);
-                showFileStatus('Error initializing app. Some features may not work.', 'error');
-            }
-        }
-
-        // Setup Event Listeners
-        function setupEventListeners() {
-            // Login button
-            const loginBtn = document.getElementById('show-login-btn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', showLogin);
-            }
+        // Tab functionality
+        function showTab(tabName, button) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            // Guest button
-            const guestBtn = document.getElementById('continue-guest-btn');
-            if (guestBtn) {
-                guestBtn.addEventListener('click', continueAsGuest);
-            }
+            // Remove active class from all buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
             
-            // Cancel login button
-            const cancelBtn = document.getElementById('cancel-login-btn');
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', hideLogin);
-            }
-            
-            // Cancel signup button
-            const cancelSignupBtn = document.getElementById('cancel-signup-btn');
-            if (cancelSignupBtn) {
-                cancelSignupBtn.addEventListener('click', () => {
-                    showLoginForm();
-                    hideLogin();
-                });
-            }
-            
-            // Login form submission
-            const loginForm = document.getElementById('login-form');
-            if (loginForm) {
-                loginForm.addEventListener('submit', login);
-            }
-            
-            // Signup form submission
-            const signupForm = document.getElementById('signup-form');
-            if (signupForm) {
-                signupForm.addEventListener('submit', signup);
-            }
-            
-            // Switch auth link
-            const switchLink = document.getElementById('switch-auth-link');
-            if (switchLink) {
-                switchLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    toggleAuthMode();
-                });
-            }
-            
-            // Login overlay click to close
-            const loginOverlay = document.getElementById('login-overlay');
-            if (loginOverlay) {
-                loginOverlay.addEventListener('click', (e) => {
-                    if (e.target === loginOverlay) {
-                        hideLogin();
-                    }
-                });
-            }
-        }
-
-        // User Management Functions
-        function showLogin() {
-            document.getElementById('login-overlay').style.display = 'flex';
-            setTimeout(() => {
-                document.getElementById('email').focus();
-            }, 100);
-        }
-
-        function hideLogin() {
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('auth-error').style.display = 'none';
-            document.getElementById('email').value = '';
-            document.getElementById('password').value = '';
-            showLoginForm(); // Reset to login form
-        }
-
-        function showLoginForm() {
-            document.getElementById('login-form').style.display = 'flex';
-            document.getElementById('signup-form').style.display = 'none';
-            document.getElementById('modal-title').textContent = 'Login to Coptic Learning System';
-            document.getElementById('demo-accounts').style.display = 'block';
-            document.getElementById('switch-text').textContent = "Don't have an account?";
-            document.getElementById('switch-auth-link').textContent = 'Sign up';
-        }
-
-        function showSignupForm() {
-            document.getElementById('login-form').style.display = 'none';
-            document.getElementById('signup-form').style.display = 'flex';
-            document.getElementById('modal-title').textContent = 'Create New Account';
-            document.getElementById('demo-accounts').style.display = 'none';
-            document.getElementById('switch-text').textContent = 'Already have an account?';
-            document.getElementById('switch-auth-link').textContent = 'Login';
-        }
-
-        function toggleAuthMode() {
-            const loginForm = document.getElementById('login-form');
-            if (loginForm.style.display !== 'none') {
-                showSignupForm();
-            } else {
-                showLoginForm();
-            }
-        }
-
-        async function login(event) {
-            event.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            if (userProfiles[email] && userProfiles[email].password === password) {
-                currentUser = userProfiles[email];
-                currentUser.email = email;
-                
-                // Save last user
-                await saveToIndexedDB('settings', { key: 'lastUser', value: email });
-                
-                // Load user's progress
-                await loadUserProgress();
-                
-                updateUserInterface();
-                hideLogin();
-                showFileStatus(`Welcome back, ${currentUser.name}!`, 'success');
-            } else {
-                document.getElementById('auth-error').textContent = 'Invalid email or password';
-                document.getElementById('auth-error').style.display = 'block';
-            }
-        }
-
-        async function signup(event) {
-            event.preventDefault();
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const role = document.getElementById('signup-role').value;
-            
-            // Check if email already exists
-            if (userProfiles[email]) {
-                document.getElementById('auth-error').textContent = 'An account with this email already exists';
-                document.getElementById('auth-error').style.display = 'block';
-                return;
-            }
-            
-            // Create new user
-            const newUser = {
-                name: name,
-                email: email,
-                password: password,
-                role: role,
-                studiedCards: [],
-                learnedCards: [],
-                progress: {
-                    correctAnswers: 0,
-                    totalQuestions: 0,
-                    studyStreak: 0,
-                    preferredLevel: 1
-                },
-                createdAt: new Date().toISOString()
-            };
-            
-            // Save to IndexedDB
-            await saveToIndexedDB('users', newUser);
-            
-            userProfiles[email] = newUser;
-            currentUser = newUser;
-            
-            // Save last user
-            await saveToIndexedDB('settings', { key: 'lastUser', value: email });
-            
-            updateUserInterface();
-            hideLogin();
-            showFileStatus(`Welcome to Coptic Learning System, ${name}!`, 'success');
-        }
-
-        async function logout() {
-            // Save current progress before logout
-            if (currentUser) {
-                await saveProgress();
-            }
-            
-            currentUser = null;
-            
-            // Clear last user setting
-            await deleteFromIndexedDB('settings', 'lastUser');
-            
-            updateUserInterface();
-            
-            // Reset progress for guest mode
-            studiedCards = new Set();
-            learnedCards = new Set();
-            correctAnswers = 0;
-            totalQuestions = 0;
-            updateProgress();
-            showFileStatus('Logged out successfully', 'success');
-        }
-
-        function continueAsGuest() {
-            document.getElementById('login-prompt').style.display = 'none';
-            const userInfo = document.getElementById('user-info');
-            userInfo.innerHTML = `
-                <div class="user-name">Guest User</div>
-                <div class="user-role">Progress will not be saved between sessions</div>
-            `;
-            userInfo.classList.add('active');
-            showFileStatus('Continuing as guest. Create an account to save your progress!', 'info');
-        }
-
-        function updateUserInterface() {
-            const userInfo = document.getElementById('user-info');
-            const loginPrompt = document.getElementById('login-prompt');
-            
-            if (currentUser) {
-                document.getElementById('user-name').textContent = currentUser.name;
-                document.getElementById('user-role').textContent = `Role: ${currentUser.role} | ${currentUser.email}`;
-                userInfo.innerHTML = `
-                    <div class="user-name">${currentUser.name}</div>
-                    <div class="user-role">Role: ${currentUser.role} | ${currentUser.email}</div>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
-                `;
-                userInfo.classList.add('active');
-                loginPrompt.style.display = 'none';
-            } else {
-                userInfo.classList.remove('active');
-                loginPrompt.style.display = 'block';
-            }
-        }
-
-        // Tab Navigation
-        function showTab(tabName, element) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            
+            // Show selected tab
             document.getElementById(tabName).classList.add('active');
+            button.classList.add('active');
             
-            // Find the corresponding tab button and activate it
-            const tabButton = element || document.querySelector(`[onclick*="showTab('${tabName}'"]`);
-            if (tabButton) {
-                tabButton.classList.add('active');
-            }
-            
-            // Update specific tabs when shown
-            if (tabName === 'progress') {
+            // Update displays based on tab
+            if (tabName === 'browse') {
+                displayVocabulary();
+            } else if (tabName === 'progress') {
                 updateProgress();
                 drawActivityChart();
-            } else if (tabName === 'browse') {
-                filterVocab();
-            } else if (tabName === 'data') {
-                updateStorageInfo();
-            }
-        }
-
-        // Flashcard Functions
-        function updateFlashcard() {
-            if (filteredVocab.length === 0) {
-                document.getElementById('coptic-word').textContent = 'No words match filters';
-                document.getElementById('english-word').textContent = 'Try different filters';
-                return;
-            }
-            
-            const word = filteredVocab[currentCardIndex];
-            document.getElementById('coptic-word').textContent = word.coptic;
-            document.getElementById('english-word').textContent = word.english;
-            document.getElementById('card-counter').textContent = `Card ${currentCardIndex + 1} of ${filteredVocab.length}`;
-            document.getElementById('current-category').textContent = word.category;
-            document.getElementById('current-level').textContent = `Level ${word.level} (${word.etymology})`;
-            
-            // Reset flip state
-            document.getElementById('flashcard').classList.remove('flipped');
-            isFlipped = false;
-        }
-
-        async function flipCard() {
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.toggle('flipped');
-            isFlipped = !isFlipped;
-            
-            if (isFlipped && filteredVocab.length > 0) {
-                const currentWord = filteredVocab[currentCardIndex];
-                const actualIndex = vocabulary.findIndex(w => 
-                    w.coptic === currentWord.coptic && w.english === currentWord.english
-                );
-                
-                if (actualIndex !== -1) {
-                    studiedCards.add(actualIndex);
-                    updateProgress();
-                    
-                    // Auto-save progress
-                    if (currentUser) {
-                        await saveProgress();
-                    }
+            } else if (tabName === 'quiz') {
+                if (quizQuestions.length === 0) {
+                    resetQuiz();
                 }
+            } else if (tabName === 'data') {
+                updateStats();
             }
+            
+            updateStats();
         }
 
-        function animateCardTransition(direction, callback) {
-            const currentCard = document.getElementById('flashcard');
-            const wrapper = document.querySelector('.flashcard-wrapper');
-            
-            // Create new card element
-            const newCard = currentCard.cloneNode(true);
-            newCard.classList.remove('flipped', 'slide-out-left', 'slide-out-up', 'slide-in-right');
-            newCard.classList.add('slide-in-right');
-            wrapper.appendChild(newCard);
-            
-            // Animate out current card
-            if (direction === 'left') {
-                currentCard.classList.add('slide-out-left');
-            } else if (direction === 'up') {
-                currentCard.classList.add('slide-out-up');
-            }
-            
-            // Wait a bit then update content and animate in new card
-            setTimeout(() => {
-                callback();
-                
-                // Update new card content
-                const word = filteredVocab[currentCardIndex];
-                newCard.querySelector('.coptic-text').textContent = word.coptic;
-                newCard.querySelector('.english-text').textContent = word.english;
-                
-                // Animate in new card
-                setTimeout(() => {
-                    newCard.classList.remove('slide-in-right');
-                }, 50);
-                
-                // Clean up old card
-                setTimeout(() => {
-                    currentCard.remove();
-                    newCard.id = 'flashcard';
-                    newCard.onclick = flipCard;
-                }, 500);
-            }, 100);
+        // Flashcard functions
+        function flipCard() {
+            const flashcard = document.getElementById('flashcard');
+            isFlipped = !isFlipped;
+            flashcard.classList.toggle('flipped');
         }
 
         function nextCard() {
-            if (filteredVocab.length === 0) return;
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.add('slide-out-left');
             
-            animateCardTransition('left', () => {
+            setTimeout(() => {
                 currentCardIndex = (currentCardIndex + 1) % filteredVocab.length;
-                document.getElementById('card-counter').textContent = `Card ${currentCardIndex + 1} of ${filteredVocab.length}`;
-                const word = filteredVocab[currentCardIndex];
-                document.getElementById('current-category').textContent = word.category;
-                document.getElementById('current-level').textContent = `Level ${word.level} (${word.etymology})`;
-                isFlipped = false;
-            });
+                updateFlashcard();
+                flashcard.classList.remove('slide-out-left');
+                flashcard.classList.add('slide-in-right');
+                
+                setTimeout(() => {
+                    flashcard.classList.remove('slide-in-right');
+                }, 50);
+            }, 500);
         }
 
         function previousCard() {
-            if (filteredVocab.length === 0) return;
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.add('slide-out-right');
             
-            // For previous, we'll use the same left animation but go backwards
-            animateCardTransition('left', () => {
+            setTimeout(() => {
                 currentCardIndex = currentCardIndex === 0 ? filteredVocab.length - 1 : currentCardIndex - 1;
-                document.getElementById('card-counter').textContent = `Card ${currentCardIndex + 1} of ${filteredVocab.length}`;
-                const word = filteredVocab[currentCardIndex];
-                document.getElementById('current-category').textContent = word.category;
-                document.getElementById('current-level').textContent = `Level ${word.level} (${word.etymology})`;
-                isFlipped = false;
-            });
+                updateFlashcard();
+                flashcard.classList.remove('slide-out-right');
+                flashcard.classList.add('slide-in-left');
+                
+                setTimeout(() => {
+                    flashcard.classList.remove('slide-in-left');
+                }, 50);
+            }, 500);
         }
 
-        function createParticles(x, y) {
-            const colors = ['#FFD700', '#FFA500', '#FF6347', '#00CED1', '#32CD32'];
-            const particleCount = 12;
-            const container = document.querySelector('.flashcard-container');
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = '50%';
-                particle.style.top = '125px';
-                particle.style.width = '10px';
-                particle.style.height = '10px';
-                particle.style.borderRadius = '50%';
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                
-                const angle = (i / particleCount) * Math.PI * 2;
-                const velocity = 100 + Math.random() * 50;
-                particle.style.setProperty('--x', Math.cos(angle) * velocity + 'px');
-                particle.style.setProperty('--y', Math.sin(angle) * velocity + 'px');
-                
-                container.appendChild(particle);
-                
-                setTimeout(() => particle.remove(), 1000);
-            }
-        }
-
-        async function markAsLearned() {
+        function updateFlashcard() {
             if (filteredVocab.length === 0) return;
             
-            const currentWord = filteredVocab[currentCardIndex];
-            const actualIndex = vocabulary.findIndex(w => 
-                w.coptic === currentWord.coptic && w.english === currentWord.english
-            );
+            const card = filteredVocab[currentCardIndex];
+            document.getElementById('coptic-word').textContent = card.coptic;
+            document.getElementById('english-word').textContent = card.english;
             
-            if (actualIndex !== -1) {
-                learnedCards.add(actualIndex);
-                studiedCards.add(actualIndex);
-                updateProgress();
-                
-                // Auto-save progress
-                if (currentUser) {
-                    await saveProgress();
-                }
-                
-                showFileStatus(`Marked "${currentWord.coptic}" as learned!`, 'success');
-                
-                // Create particle effect
-                createParticles();
-                
-                // Animate card going up
-                animateCardTransition('up', () => {
-                    // Move to next card after marking as learned
-                    currentCardIndex = (currentCardIndex + 1) % filteredVocab.length;
-                    const word = filteredVocab[currentCardIndex];
-                    document.getElementById('card-counter').textContent = `Card ${currentCardIndex + 1} of ${filteredVocab.length}`;
-                    document.getElementById('current-category').textContent = word.category;
-                    document.getElementById('current-level').textContent = `Level ${word.level} (${word.etymology})`;
-                    isFlipped = false;
-                });
+            // Update card info
+            document.getElementById('card-counter').textContent = `Card ${currentCardIndex + 1} of ${filteredVocab.length}`;
+            document.getElementById('current-category').textContent = card.category;
+            document.getElementById('current-level').textContent = `Level: ${card.level}`;
+            
+            // Reset flip state
+            const flashcard = document.getElementById('flashcard');
+            if (isFlipped) {
+                isFlipped = false;
+                flashcard.classList.remove('flipped');
             }
+            
+            // Mark as studied
+            studiedCards.add(currentCardIndex);
+            saveProgress();
         }
 
         function shuffleCards() {
-            for (let i = filteredVocab.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [filteredVocab[i], filteredVocab[j]] = [filteredVocab[j], filteredVocab[i]];
-            }
+            filteredVocab = filteredVocab.sort(() => Math.random() - 0.5);
             currentCardIndex = 0;
-            
-            // Reset the flashcard without animation
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.remove('slide-out-left', 'slide-out-up', 'slide-in-right');
-            
             updateFlashcard();
             showFileStatus('Cards shuffled!', 'success');
         }
 
+        function markAsLearned() {
+            if (filteredVocab.length === 0) return;
+            
+            const card = filteredVocab[currentCardIndex];
+            learnedCards.add(currentCardIndex);
+            
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.add('slide-out-up');
+            
+            setTimeout(() => {
+                if (currentCardIndex === filteredVocab.length - 1) {
+                    currentCardIndex = 0;
+                } else {
+                    currentCardIndex++;
+                }
+                updateFlashcard();
+                flashcard.classList.remove('slide-out-up');
+            }, 500);
+            
+            updateProgress();
+            saveProgress();
+            createParticles(flashcard, 'success');
+            showFileStatus('Card marked as learned!', 'success');
+        }
+
         function filterFlashcards() {
-            const categoryFilter = document.getElementById('flashcard-category-filter').value;
             const levelFilter = document.getElementById('flashcard-level-filter').value;
+            const categoryFilter = document.getElementById('flashcard-category-filter').value;
             
             filteredVocab = vocabulary.filter(word => {
-                const matchesCategory = !categoryFilter || word.category === categoryFilter;
-                const matchesLevel = !levelFilter || word.level.toString() === levelFilter;
-                return matchesCategory && matchesLevel;
+                const levelMatch = !levelFilter || word.level == levelFilter;
+                const categoryMatch = !categoryFilter || word.category === categoryFilter;
+                return levelMatch && categoryMatch;
             });
             
             currentCardIndex = 0;
-            
-            // Reset the flashcard without animation
-            const flashcard = document.getElementById('flashcard');
-            flashcard.classList.remove('slide-out-left', 'slide-out-up', 'slide-in-right');
-            
             updateFlashcard();
         }
 
-        // Quiz Functions
-        function generateQuizQuestions() {
-            // Create a set of random questions from vocabulary
-            quizQuestions = [];
-            const indices = [...Array(vocabulary.length).keys()];
-            
-            // Shuffle indices
-            for (let i = indices.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [indices[i], indices[j]] = [indices[j], indices[i]];
-            }
-            
-            // Take first QUIZ_LENGTH questions
-            for (let i = 0; i < Math.min(QUIZ_LENGTH, vocabulary.length); i++) {
-                quizQuestions.push(indices[i]);
-            }
-            
+        // Quiz functions
+        function resetQuiz() {
+            quizQuestions = generateQuizQuestions();
             currentQuizQuestion = 0;
-            showQuizQuestion();
-        }
-
-        function showQuizQuestion() {
-            if (currentQuizQuestion >= quizQuestions.length) {
-                finishQuiz();
-                return;
-            }
-            
-            const wordIndex = quizQuestions[currentQuizQuestion];
-            const currentWord = vocabulary[wordIndex];
-            const options = [currentWord.english];
-            
-            // Add 3 random incorrect options
-            while (options.length < 4) {
-                const randomWord = vocabulary[Math.floor(Math.random() * vocabulary.length)];
-                if (!options.includes(randomWord.english) && randomWord.english !== currentWord.english) {
-                    options.push(randomWord.english);
-                }
-            }
-            
-            // Shuffle options
-            for (let i = options.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [options[i], options[j]] = [options[j], options[i]];
-            }
-
-            // Update quiz progress
-            document.getElementById('current-question').textContent = currentQuizQuestion + 1;
-            document.getElementById('total-questions').textContent = quizQuestions.length;
-            document.getElementById('quiz-progress').style.width = 
-                ((currentQuizQuestion / quizQuestions.length) * 100) + '%';
-            
-            document.getElementById('quiz-question').innerHTML = 
-                `What does "<span class="coptic">${currentWord.coptic}</span>" mean?`;
-            
-            const optionsContainer = document.getElementById('quiz-options');
-            optionsContainer.innerHTML = '';
-            
-            options.forEach((option, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.textContent = option;
-                optionDiv.onclick = () => selectOption(option, currentWord.english);
-                optionsContainer.appendChild(optionDiv);
-            });
-
             quizAnswered = false;
+            
+            document.getElementById('quiz-results').style.display = 'none';
             document.getElementById('next-quiz').style.display = 'none';
             document.getElementById('finish-quiz').style.display = 'none';
+            
+            displayQuizQuestion();
         }
 
-        async function selectOption(selectedAnswer, correctAnswer) {
-            if (quizAnswered) return;
+        function generateQuizQuestions() {
+            const questions = [];
+            const availableWords = [...vocabulary];
             
-            const options = document.querySelectorAll('.option');
-            totalQuestions++;
-            
-            options.forEach(option => {
-                if (option.textContent === selectedAnswer) {
-                    if (selectedAnswer === correctAnswer) {
-                        option.classList.add('correct');
-                        correctAnswers++;
-                    } else {
-                        option.classList.add('incorrect');
-                    }
+            for (let i = 0; i < QUIZ_LENGTH && availableWords.length > 0; i++) {
+                const randomIndex = Math.floor(Math.random() * availableWords.length);
+                const correctWord = availableWords.splice(randomIndex, 1)[0];
+                
+                // Generate options
+                const options = [correctWord];
+                const tempVocab = vocabulary.filter(w => w.coptic !== correctWord.coptic);
+                
+                for (let j = 0; j < 3 && tempVocab.length > 0; j++) {
+                    const optIndex = Math.floor(Math.random() * tempVocab.length);
+                    options.push(tempVocab.splice(optIndex, 1)[0]);
                 }
-                if (option.textContent === correctAnswer) {
-                    option.classList.add('correct');
-                }
-            });
-            
-            quizAnswered = true;
-            updateProgress();
-            
-            // Auto-save progress
-            if (currentUser) {
-                await saveProgress();
+                
+                questions.push({
+                    word: correctWord,
+                    options: options.sort(() => Math.random() - 0.5)
+                });
             }
             
-            // Show appropriate button
-            if (currentQuizQuestion < quizQuestions.length - 1) {
+            return questions;
+        }
+
+        function displayQuizQuestion() {
+            if (currentQuizQuestion >= quizQuestions.length) return;
+            
+            const question = quizQuestions[currentQuizQuestion];
+            const questionEl = document.getElementById('quiz-question');
+            const optionsEl = document.getElementById('quiz-options');
+            
+            questionEl.innerHTML = `What does "<span class="coptic">${question.word.coptic}</span>" mean?`;
+            
+            optionsEl.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.textContent = option.english;
+                optionEl.onclick = () => selectAnswer(index);
+                optionsEl.appendChild(optionEl);
+            });
+            
+            // Update progress
+            document.getElementById('current-question').textContent = currentQuizQuestion + 1;
+            document.getElementById('total-questions').textContent = QUIZ_LENGTH;
+            const progress = ((currentQuizQuestion + 1) / QUIZ_LENGTH) * 100;
+            document.getElementById('quiz-progress').style.width = `${progress}%`;
+            
+            quizAnswered = false;
+        }
+
+        function selectAnswer(index) {
+            if (quizAnswered) return;
+            
+            quizAnswered = true;
+            const question = quizQuestions[currentQuizQuestion];
+            const options = document.querySelectorAll('.option');
+            const selectedOption = options[index];
+            
+            totalQuestions++;
+            
+            if (question.options[index] === question.word) {
+                selectedOption.classList.add('correct');
+                correctAnswers++;
+                createParticles(selectedOption, 'success');
+            } else {
+                selectedOption.classList.add('incorrect');
+                // Show correct answer
+                options.forEach((opt, i) => {
+                    if (question.options[i] === question.word) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            
+            // Show next button
+            if (currentQuizQuestion < QUIZ_LENGTH - 1) {
                 document.getElementById('next-quiz').style.display = 'inline-block';
             } else {
                 document.getElementById('finish-quiz').style.display = 'inline-block';
             }
+            
+            saveProgress();
         }
 
         function nextQuiz() {
-            if (!quizAnswered) return;
-            
             currentQuizQuestion++;
-            showQuizQuestion();
+            document.getElementById('next-quiz').style.display = 'none';
+            displayQuizQuestion();
         }
 
-        async function finishQuiz() {
-            const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-            document.getElementById('final-score').textContent = `${correctAnswers} / ${totalQuestions} (${accuracy}%)`;
+        function finishQuiz() {
+            const score = Math.round((correctAnswers / totalQuestions) * 100);
+            document.getElementById('final-score').textContent = `${score}%`;
             document.getElementById('quiz-results').style.display = 'block';
-            document.querySelector('.question-card').style.display = 'none';
-            document.getElementById('next-quiz').style.display = 'none';
             document.getElementById('finish-quiz').style.display = 'none';
             
-            // Update progress bar to 100%
-            document.getElementById('quiz-progress').style.width = '100%';
+            updateProgress();
+        }
+
+        // Browse functionality
+        function filterVocab() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const categoryFilter = document.getElementById('category-filter').value;
+            const levelFilter = document.getElementById('level-filter').value;
             
-            // Save final quiz results
-            if (currentUser) {
-                await saveProgress();
-            }
+            filteredVocab = vocabulary.filter(word => {
+                const searchMatch = !searchTerm || 
+                    word.coptic.toLowerCase().includes(searchTerm) ||
+                    word.english.toLowerCase().includes(searchTerm);
+                const categoryMatch = !categoryFilter || word.category === categoryFilter;
+                const levelMatch = !levelFilter || word.level == levelFilter;
+                
+                return searchMatch && categoryMatch && levelMatch;
+            });
+            
+            displayVocabulary();
+            
+            // Update counts
+            document.getElementById('filtered-count').textContent = filteredVocab.length;
+            document.getElementById('total-vocab-count').textContent = vocabulary.length;
         }
 
-        function resetQuiz() {
-            currentQuizQuestion = 0;
-            generateQuizQuestions();
-            document.getElementById('quiz-results').style.display = 'none';
-            document.querySelector('.question-card').style.display = 'block';
-            showQuizQuestion();
-        }
-
-        // Browse Functions
-        function populateBrowse() {
+        function displayVocabulary() {
             const grid = document.getElementById('vocab-grid');
             grid.innerHTML = '';
             
@@ -2609,291 +2713,45 @@
                 `;
                 grid.appendChild(card);
             });
-            
-            document.getElementById('filtered-count').textContent = filteredVocab.length;
-            document.getElementById('total-vocab-count').textContent = vocabulary.length;
         }
 
-        function filterVocab() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            const categoryFilter = document.getElementById('category-filter').value;
-            const levelFilter = document.getElementById('level-filter').value;
-            
-            filteredVocab = vocabulary.filter(word => {
-                const matchesSearch = word.coptic.toLowerCase().includes(searchTerm) || 
-                                    word.english.toLowerCase().includes(searchTerm);
-                const matchesCategory = !categoryFilter || word.category === categoryFilter;
-                const matchesLevel = !levelFilter || word.level.toString() === levelFilter;
-                return matchesSearch && matchesCategory && matchesLevel;
-            });
-            
-            populateBrowse();
-        }
-
-        // Progress Functions
+        // Progress functions
         function updateProgress() {
-            const learnedCount = learnedCards.size;
-            const totalCount = vocabulary.length;
-            const progressPercent = totalCount > 0 ? Math.round((learnedCount / totalCount) * 100) : 0;
+            const total = vocabulary.length;
+            const learned = learnedCards.size;
+            const percentage = total > 0 ? Math.round((learned / total) * 100) : 0;
             
-            document.getElementById('learned-count').textContent = learnedCount;
-            document.getElementById('total-count').textContent = totalCount;
-            document.getElementById('progress-percent').textContent = progressPercent;
-            document.getElementById('overall-progress').style.width = progressPercent + '%';
+            document.getElementById('overall-progress').style.width = `${percentage}%`;
+            document.getElementById('learned-count').textContent = learned;
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('progress-percent').textContent = percentage;
             
+            // Update stats
             document.getElementById('cards-studied').textContent = studiedCards.size;
-            
             const accuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
-            document.getElementById('quiz-score').textContent = accuracy + '%';
+            document.getElementById('quiz-score').textContent = `${accuracy}%`;
             
-            // Calculate study streak
-            const streak = currentUser ? currentUser.progress?.studyStreak || 0 : Math.floor(studiedCards.size / 5);
-            document.getElementById('study-streak').textContent = streak;
-            
-            // Most studied category
+            // Calculate favorite category
             const categoryCount = {};
-            Array.from(studiedCards).forEach(index => {
-                if (vocabulary[index]) {
-                    const category = vocabulary[index].category;
-                    categoryCount[category] = (categoryCount[category] || 0) + 1;
+            vocabulary.forEach((word, index) => {
+                if (studiedCards.has(index)) {
+                    categoryCount[word.category] = (categoryCount[word.category] || 0) + 1;
                 }
             });
             
-            const topCategory = Object.keys(categoryCount).length > 0 
-                ? Object.keys(categoryCount).reduce((a, b) => categoryCount[a] > categoryCount[b] ? a : b)
-                : '—';
+            let topCategory = '—';
+            let maxCount = 0;
+            for (const [category, count] of Object.entries(categoryCount)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    topCategory = category;
+                }
+            }
             document.getElementById('favorite-category').textContent = topCategory;
+            
+            updateStats();
         }
 
-        // Data Management Functions
-        async function exportUserData() {
-            const userData = {
-                user: currentUser ? {
-                    name: currentUser.name,
-                    email: currentUser.email,
-                    role: currentUser.role
-                } : null,
-                studiedCards: Array.from(studiedCards),
-                learnedCards: Array.from(learnedCards),
-                progress: {
-                    correctAnswers: correctAnswers,
-                    totalQuestions: totalQuestions,
-                    accuracy: totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0,
-                    sessionTime: Math.round((Date.now() - sessionStartTime) / 60000)
-                },
-                exportDate: new Date().toISOString(),
-                vocabularyVersion: "Coptic-English Historical Lexicon v1.0 (PWA)"
-            };
-            
-            const dataStr = JSON.stringify(userData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = `coptic_progress_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            showFileStatus('Progress data exported successfully!', 'success');
-        }
-
-        async function importUserData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const userData = JSON.parse(e.target.result);
-                    
-                    // Restore progress
-                    if (userData.studiedCards) {
-                        studiedCards = new Set(userData.studiedCards);
-                    }
-                    if (userData.learnedCards) {
-                        learnedCards = new Set(userData.learnedCards);
-                    }
-                    if (userData.progress) {
-                        correctAnswers = userData.progress.correctAnswers || 0;
-                        totalQuestions = userData.progress.totalQuestions || 0;
-                    }
-                    
-                    updateProgress();
-                    updateDataStats();
-                    
-                    // Save to IndexedDB if user is logged in
-                    if (currentUser) {
-                        await saveProgress();
-                    }
-                    
-                    showFileStatus(`Progress imported successfully! Restored ${learnedCards.size} learned cards.`, 'success');
-                    
-                } catch (error) {
-                    showFileStatus(`Error importing data: ${error.message}`, 'error');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        async function exportVocabulary() {
-            const vocabData = {
-                vocabulary: vocabulary,
-                metadata: {
-                    title: "Coptic-English Historical Lexicon",
-                    description: "Bohairic Coptic vocabulary with difficulty levels and etymology",
-                    totalEntries: vocabulary.length,
-                    levels: Math.max(...vocabulary.map(w => w.level)),
-                    categories: [...new Set(vocabulary.map(w => w.category))],
-                    exportDate: new Date().toISOString()
-                }
-            };
-            
-            const dataStr = JSON.stringify(vocabData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = `coptic_vocabulary_${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            showFileStatus('Vocabulary exported successfully!', 'success');
-        }
-
-        // File Loading Functions
-        async function loadVocabularyFile() {
-            const fileInput = document.getElementById('vocab-file');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                showFileStatus('Please select a vocabulary JSON file first.', 'error');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const vocabData = JSON.parse(e.target.result);
-                    
-                    if (vocabData.vocabulary && Array.isArray(vocabData.vocabulary)) {
-                        vocabulary = vocabData.vocabulary;
-                        filteredVocab = [...vocabulary];
-                        
-                        // Save to IndexedDB
-                        await saveVocabularyToDB();
-                        
-                        currentCardIndex = 0;
-                        updateFlashcard();
-                        updateDataStats();
-                        populateBrowse();
-                        showFileStatus(`Loaded ${vocabulary.length} vocabulary entries successfully!`, 'success');
-                    } else {
-                        throw new Error('Invalid vocabulary file format');
-                    }
-                } catch (error) {
-                    showFileStatus(`Error loading vocabulary: ${error.message}`, 'error');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        async function loadSampleData() {
-            vocabulary = [...defaultVocabulary];
-            filteredVocab = [...vocabulary];
-            
-            // Save to IndexedDB
-            await saveVocabularyToDB();
-            
-            currentCardIndex = 0;
-            updateFlashcard();
-            updateDataStats();
-            populateBrowse();
-            showFileStatus('Sample data loaded successfully.', 'success');
-        }
-
-        function showFileStatus(message, type) {
-            const statusDiv = document.getElementById('file-status');
-            statusDiv.textContent = message;
-            statusDiv.className = `file-status ${type}`;
-            
-            // Auto-hide after 5 seconds
-            setTimeout(() => {
-                statusDiv.classList.remove(type);
-            }, 5000);
-        }
-
-        function updateDataStats() {
-            const totalEntries = vocabulary.length;
-            const levels = new Set(vocabulary.map(w => w.level)).size;
-            const etymologies = new Set(vocabulary.map(w => w.etymology)).size;
-            const sessionTime = Math.round((Date.now() - sessionStartTime) / 60000);
-            
-            document.getElementById('total-entries').textContent = totalEntries;
-            document.getElementById('level-distribution').textContent = levels;
-            document.getElementById('etymology-sources').textContent = etymologies;
-            document.getElementById('session-time').textContent = sessionTime;
-        }
-
-        // Storage Info
-        async function updateStorageInfo() {
-            if ('storage' in navigator && 'estimate' in navigator.storage) {
-                try {
-                    const estimate = await navigator.storage.estimate();
-                    const usage = estimate.usage || 0;
-                    const quota = estimate.quota || 0;
-                    
-                    const usageInKB = Math.round(usage / 1024);
-                    const quotaInMB = Math.round(quota / 1024 / 1024);
-                    
-                    document.getElementById('storage-used').textContent = `${usageInKB} KB`;
-                    document.getElementById('storage-total').textContent = quotaInMB > 0 ? `${quotaInMB} MB` : '∞';
-                    
-                    const percentage = quota > 0 ? (usage / quota) * 100 : 0;
-                    document.getElementById('storage-bar').style.width = `${Math.min(percentage, 100)}%`;
-                } catch (error) {
-                    console.error('Error estimating storage:', error);
-                }
-            }
-        }
-
-        // Clear all data
-        async function clearAllData() {
-            if (confirm('This will delete ALL data including vocabulary, users, and progress. Are you sure?')) {
-                try {
-                    // Clear IndexedDB
-                    const stores = ['vocabulary', 'users', 'progress', 'settings'];
-                    for (const store of stores) {
-                        const transaction = db.transaction([store], 'readwrite');
-                        await transaction.objectStore(store).clear();
-                    }
-                    
-                    // Reset app state
-                    vocabulary = [...defaultVocabulary];
-                    filteredVocab = [...vocabulary];
-                    currentUser = null;
-                    userProfiles = {};
-                    studiedCards = new Set();
-                    learnedCards = new Set();
-                    correctAnswers = 0;
-                    totalQuestions = 0;
-                    currentCardIndex = 0;
-                    
-                    // Reload default vocabulary
-                    await saveVocabularyToDB();
-                    
-                    // Update UI
-                    updateUserInterface();
-                    updateFlashcard();
-                    updateProgress();
-                    updateDataStats();
-                    populateBrowse();
-                    
-                    showFileStatus('All data cleared successfully!', 'success');
-                } catch (error) {
-                    showFileStatus(`Error clearing data: ${error.message}`, 'error');
-                }
-            }
-        }
-
-        // Activity Chart
         function drawActivityChart() {
             const canvas = document.getElementById('activity-chart');
             if (!canvas) return;
@@ -2905,49 +2763,451 @@
             // Clear canvas
             ctx.clearRect(0, 0, width, height);
             
-            // Sample data for demonstration (in real app, would pull from progress history)
+            // Sample data (would be real data in production)
+            const data = [20, 35, 45, 30, 50, 60, 40];
             const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const values = [5, 8, 12, 6, 15, 10, 7];
-            const maxValue = Math.max(...values);
+            
+            const barWidth = width / data.length * 0.6;
+            const spacing = width / data.length * 0.4;
+            const maxValue = Math.max(...data);
             
             // Draw bars
-            const barWidth = width / days.length * 0.6;
-            const barSpacing = width / days.length * 0.4;
-            
-            ctx.fillStyle = '#8b4513';
-            values.forEach((value, index) => {
+            data.forEach((value, index) => {
                 const barHeight = (value / maxValue) * (height - 40);
-                const x = index * (barWidth + barSpacing) + barSpacing / 2;
+                const x = index * (barWidth + spacing) + spacing / 2;
                 const y = height - barHeight - 20;
                 
+                // Gradient fill
+                const gradient = ctx.createLinearGradient(0, y, 0, height - 20);
+                gradient.addColorStop(0, '#cd853f');
+                gradient.addColorStop(1, '#8b4513');
+                
+                ctx.fillStyle = gradient;
                 ctx.fillRect(x, y, barWidth, barHeight);
                 
-                // Draw labels
-                ctx.fillStyle = '#333';
+                // Day labels
+                ctx.fillStyle = '#6c757d';
                 ctx.font = '12px Arial';
                 ctx.textAlign = 'center';
                 ctx.fillText(days[index], x + barWidth / 2, height - 5);
-                ctx.fillText(value, x + barWidth / 2, y - 5);
                 
-                ctx.fillStyle = '#8b4513';
+                // Value labels
+                ctx.fillText(value, x + barWidth / 2, y - 5);
             });
         }
 
-        // Update session time every minute
-        setInterval(() => {
-            updateDataStats();
-        }, 60000);
+        // User authentication functions
+        function showLogin() {
+            document.getElementById('login-overlay').style.display = 'flex';
+            document.getElementById('login-form').style.display = 'flex';
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('modal-title').textContent = 'Login to Coptic Learning System';
+            document.getElementById('switch-text').textContent = "Don't have an account?";
+            document.getElementById('switch-auth-link').textContent = 'Sign up';
+        }
 
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            initApp();
-        });
+        function showSignup() {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'flex';
+            document.getElementById('modal-title').textContent = 'Create Your Account';
+            document.getElementById('switch-text').textContent = 'Already have an account?';
+            document.getElementById('switch-auth-link').textContent = 'Login';
+            document.getElementById('demo-accounts').style.display = 'none';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (userProfiles[email] && userProfiles[email].password === password) {
+                currentUser = userProfiles[email];
+                await saveToIndexedDB('settings', { key: 'lastUser', value: email });
+                await loadUserProgress();
+                updateUI();
+                document.getElementById('login-overlay').style.display = 'none';
+                showFileStatus(`Welcome back, ${currentUser.name}!`, 'success');
+            } else {
+                showError('Invalid email or password');
+            }
+        }
+
+        async function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const role = document.getElementById('signup-role').value;
+            
+            if (userProfiles[email]) {
+                showError('Email already exists');
+                return;
+            }
+            
+            const newUser = {
+                name,
+                email,
+                password,
+                role,
+                studiedCards: [],
+                learnedCards: [],
+                progress: {
+                    correctAnswers: 0,
+                    totalQuestions: 0,
+                    studyStreak: 0,
+                    preferredLevel: 1
+                },
+                createdAt: new Date().toISOString()
+            };
+            
+            userProfiles[email] = newUser;
+            await saveToIndexedDB('users', newUser);
+            
+            currentUser = newUser;
+            await saveToIndexedDB('settings', { key: 'lastUser', value: email });
+            updateUI();
+            document.getElementById('login-overlay').style.display = 'none';
+            showFileStatus(`Welcome, ${currentUser.name}!`, 'success');
+        }
+
+        async function logout() {
+            await saveProgress();
+            currentUser = null;
+            studiedCards.clear();
+            learnedCards.clear();
+            correctAnswers = 0;
+            totalQuestions = 0;
+            
+            await deleteFromIndexedDB('settings', 'lastUser');
+            updateUI();
+            showFileStatus('Logged out successfully', 'success');
+        }
+
+        function continueAsGuest() {
+            document.getElementById('login-overlay').style.display = 'none';
+            updateUI();
+        }
+
+        function updateUI() {
+            const userInfo = document.getElementById('user-info');
+            const loginPrompt = document.getElementById('login-prompt');
+            
+            if (currentUser) {
+                userInfo.classList.add('active');
+                loginPrompt.style.display = 'none';
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-role').textContent = `${currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)}`;
+            } else {
+                userInfo.classList.remove('active');
+                loginPrompt.style.display = 'block';
+            }
+            
+            updateProgress();
+            updateFlashcard();
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('auth-error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 3000);
+        }
+
+        // File management functions
+        function exportUserData() {
+            if (!currentUser) {
+                showFileStatus('Please login to export your data', 'error');
+                return;
+            }
+            
+            const exportData = {
+                user: currentUser,
+                progress: {
+                    studiedCards: Array.from(studiedCards),
+                    learnedCards: Array.from(learnedCards),
+                    correctAnswers,
+                    totalQuestions
+                },
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `coptic-progress-${currentUser.email}-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showFileStatus('Progress exported successfully!', 'success');
+        }
+
+        async function importUserData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                if (!data.user || !data.progress) {
+                    throw new Error('Invalid file format');
+                }
+                
+                // Import user if not exists
+                if (!userProfiles[data.user.email]) {
+                    userProfiles[data.user.email] = data.user;
+                    await saveToIndexedDB('users', data.user);
+                }
+                
+                // Set as current user
+                currentUser = userProfiles[data.user.email];
+                await saveToIndexedDB('settings', { key: 'lastUser', value: data.user.email });
+                
+                // Import progress
+                studiedCards = new Set(data.progress.studiedCards);
+                learnedCards = new Set(data.progress.learnedCards);
+                correctAnswers = data.progress.correctAnswers || 0;
+                totalQuestions = data.progress.totalQuestions || 0;
+                
+                await saveProgress();
+                updateUI();
+                
+                showFileStatus('Progress imported successfully!', 'success');
+            } catch (error) {
+                showFileStatus('Error importing file: ' + error.message, 'error');
+            }
+        }
+
+        function exportVocabulary() {
+            const dataStr = JSON.stringify(vocabulary, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(dataBlob);
+            link.download = `coptic-vocabulary-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            showFileStatus('Vocabulary exported successfully!', 'success');
+        }
+
+        async function loadVocabularyFile() {
+            const fileInput = document.getElementById('vocab-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showFileStatus('Please select a file first', 'error');
+                return;
+            }
+            
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+                
+                if (!Array.isArray(data)) {
+                    throw new Error('Invalid vocabulary format');
+                }
+                
+                vocabulary = data;
+                filteredVocab = [...vocabulary];
+                await saveVocabularyToDB(true); // Mark as custom
+                
+                // Update dropdowns with new categories and levels
+                updateDropdowns();
+                
+                currentCardIndex = 0;
+                updateFlashcard();
+                displayVocabulary();
+                updateProgress();
+                
+                showFileStatus(`Loaded ${vocabulary.length} vocabulary entries!`, 'success');
+            } catch (error) {
+                showFileStatus('Error loading vocabulary: ' + error.message, 'error');
+            }
+        }
+
+        async function loadSampleData() {
+            if (confirm('This will reload vocabulary from the external JSON file. Continue?')) {
+                // Clear custom vocabulary flag
+                if (useLocalStorage) {
+                    localStorage.removeItem('coptic_vocabulary_custom');
+                } else if (db) {
+                    const transaction = db.transaction(['vocabulary'], 'readwrite');
+                    await new Promise((resolve) => {
+                        transaction.objectStore('vocabulary').clear();
+                        transaction.oncomplete = resolve;
+                    });
+                }
+                
+                // Reload from JSON
+                const jsonVocabulary = await loadVocabularyFromJSON();
+                vocabulary = jsonVocabulary;
+                filteredVocab = [...vocabulary];
+                
+                // Update dropdowns
+                updateDropdowns();
+                
+                currentCardIndex = 0;
+                updateFlashcard();
+                displayVocabulary();
+                updateProgress();
+                
+                showFileStatus('Vocabulary reloaded from JSON!', 'success');
+            }
+        }
+
+        async function clearAllData() {
+            if (confirm('This will delete ALL your data including progress and custom vocabulary. This cannot be undone. Continue?')) {
+                if (useLocalStorage) {
+                    // Clear localStorage
+                    const keys = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.startsWith('coptic_')) {
+                            keys.push(key);
+                        }
+                    }
+                    keys.forEach(key => localStorage.removeItem(key));
+                } else if (db) {
+                    // Clear IndexedDB
+                    const transaction = db.transaction(['vocabulary', 'users', 'progress', 'settings'], 'readwrite');
+                    
+                    await new Promise((resolve) => {
+                        transaction.objectStore('vocabulary').clear();
+                        transaction.objectStore('users').clear();
+                        transaction.objectStore('progress').clear();
+                        transaction.objectStore('settings').clear();
+                        transaction.oncomplete = resolve;
+                    });
+                }
+                
+                // Reset app state
+                vocabulary = [...defaultVocabulary];
+                filteredVocab = [...vocabulary];
+                currentUser = null;
+                userProfiles = { ...demoAccounts };
+                studiedCards.clear();
+                learnedCards.clear();
+                correctAnswers = 0;
+                totalQuestions = 0;
+                currentCardIndex = 0;
+                
+                // Save default data
+                await saveVocabularyToDB();
+                for (const email in demoAccounts) {
+                    await saveToIndexedDB('users', demoAccounts[email]);
+                }
+                
+                updateUI();
+                showFileStatus('All data cleared!', 'success');
+            }
+        }
+
+        function showFileStatus(message, type) {
+            const status = document.getElementById('file-status');
+            status.textContent = message;
+            status.className = `file-status ${type}`;
+            
+            setTimeout(() => {
+                status.className = 'file-status';
+            }, 3000);
+        }
+
+        // Update statistics
+        function updateStats() {
+            // Update total entries
+            document.getElementById('total-entries').textContent = vocabulary.length;
+            
+            // Update category count
+            document.getElementById('category-count').textContent = availableCategories.size;
+            
+            // Calculate level distribution
+            const levels = new Set(vocabulary.map(w => w.level));
+            document.getElementById('level-distribution').textContent = levels.size;
+            
+            // Calculate etymology sources
+            const etymologies = new Set(vocabulary.map(w => w.etymology));
+            document.getElementById('etymology-sources').textContent = etymologies.size;
+            
+            // Update session time
+            const sessionMinutes = Math.floor((Date.now() - sessionStartTime) / 60000);
+            document.getElementById('session-time').textContent = sessionMinutes;
+            
+            // Update storage type
+            const storageTypeEl = document.getElementById('storage-type');
+            if (storageTypeEl) {
+                storageTypeEl.textContent = useLocalStorage ? 'localStorage (Fallback)' : 'IndexedDB (Full Features)';
+            }
+            
+            // Display loaded categories
+            const categoriesEl = document.getElementById('loaded-categories');
+            if (categoriesEl) {
+                categoriesEl.innerHTML = '';
+                Array.from(availableCategories).sort().forEach(cat => {
+                    const span = document.createElement('span');
+                    span.style.cssText = 'background: #e9ecef; padding: 5px 12px; border-radius: 15px; color: #495057; font-size: 0.9em;';
+                    span.textContent = cat;
+                    categoriesEl.appendChild(span);
+                });
+            }
+            
+            // Display loaded levels
+            const levelsEl = document.getElementById('loaded-levels');
+            if (levelsEl) {
+                levelsEl.innerHTML = '';
+                Array.from(levels).sort((a, b) => a - b).forEach(level => {
+                    const span = document.createElement('span');
+                    span.style.cssText = 'background: #e9ecef; padding: 5px 12px; border-radius: 15px; color: #495057; font-size: 0.9em;';
+                    span.textContent = `Level ${level}`;
+                    levelsEl.appendChild(span);
+                });
+            }
+            
+            // Estimate storage usage
+            if (useLocalStorage) {
+                let totalSize = 0;
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('coptic_')) {
+                        totalSize += localStorage.getItem(key).length;
+                    }
+                }
+                const sizeKB = Math.round(totalSize / 1024);
+                document.getElementById('storage-used').textContent = `${sizeKB} KB`;
+            }
+        }
+
+        // Create particle effects
+        function createParticles(element, type = 'success') {
+            const rect = element.getBoundingClientRect();
+            const colors = type === 'success' ? ['#27ae60', '#2ecc71', '#3498db'] : ['#e74c3c', '#c0392b', '#e67e22'];
+            
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${rect.left + rect.width / 2}px`;
+                particle.style.top = `${rect.top + rect.height / 2}px`;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.width = particle.style.height = `${Math.random() * 10 + 5}px`;
+                particle.style.borderRadius = '50%';
+                particle.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+                particle.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            const activeTab = document.querySelector('.tab-content.active').id;
+            if (document.querySelector('.login-overlay').style.display === 'flex') return;
             
-            if (activeTab === 'flashcards') {
+            const activeTab = document.querySelector('.tab-content.active');
+            
+            if (activeTab && activeTab.id === 'flashcards') {
                 switch(e.key) {
                     case 'ArrowLeft':
                         previousCard();
@@ -2968,110 +3228,109 @@
             }
         });
 
-        // Auto-save on page unload
-        window.addEventListener('beforeunload', async () => {
-            if (currentUser) {
-                await saveProgress();
-            }
-        });
-    </script>
-
-    <!-- Create manifest.json for PWA -->
-    <script>
-        // Generate manifest.json content
-        const manifest = {
-            "name": "Bohairic Coptic Learning System",
-            "short_name": "Coptic Learn",
-            "description": "Academic vocabulary learning system for Bohairic Coptic with offline support",
-            "start_url": "/",
-            "display": "standalone",
-            "background_color": "#1a1a2e",
-            "theme_color": "#8b4513",
-            "orientation": "any",
-            "icons": [
-                {
-                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%238b4513'/%3E%3Ctext x='256' y='300' font-size='200' font-family='serif' text-anchor='middle' fill='white'%3E%E2%B2%83%3C/text%3E%3C/svg%3E",
-                    "sizes": "192x192",
-                    "type": "image/svg+xml"
-                },
-                {
-                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%238b4513'/%3E%3Ctext x='256' y='300' font-size='200' font-family='serif' text-anchor='middle' fill='white'%3E%E2%B2%83%3C/text%3E%3C/svg%3E",
-                    "sizes": "512x512",
-                    "type": "image/svg+xml"
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login/Signup
+            document.getElementById('show-login-btn').addEventListener('click', showLogin);
+            document.getElementById('continue-guest-btn').addEventListener('click', continueAsGuest);
+            document.getElementById('cancel-login-btn').addEventListener('click', () => {
+                document.getElementById('login-overlay').style.display = 'none';
+            });
+            document.getElementById('cancel-signup-btn').addEventListener('click', () => {
+                document.getElementById('login-overlay').style.display = 'none';
+            });
+            document.getElementById('switch-auth-link').addEventListener('click', (e) => {
+                e.preventDefault();
+                if (document.getElementById('login-form').style.display !== 'none') {
+                    showSignup();
+                } else {
+                    showLogin();
                 }
-            ]
-        };
-        
-        // Create a blob URL for the manifest
-        const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
-        const manifestURL = URL.createObjectURL(manifestBlob);
-        
-        // Update the manifest link
-        document.querySelector('link[rel="manifest"]').href = manifestURL;
-    </script>
-
-    <!-- Service Worker -->
-    <script>
-        // Create service worker content
-        const swContent = `
-// Service Worker for Coptic Learning PWA
-const CACHE_NAME = 'coptic-learning-v1';
-const urlsToCache = [
-    '/',
-    'https://github.com/CopticScriptorium/coptic-nlp/raw/refs/heads/master/antinoou-webfont.ttf'
-];
-
-// Install event
-self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
-            })
-    );
-});
-
-// Fetch event
-self.addEventListener('fetch', event => {
-    event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                // Cache hit - return response
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
-            })
-    );
-});
-
-// Activate event
-self.addEventListener('activate', event => {
-    const cacheWhitelist = [CACHE_NAME];
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames.map(cacheName => {
-                    if (cacheWhitelist.indexOf(cacheName) === -1) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-    );
-});
-`;
-
-        // Create service worker registration
-        if ('serviceWorker' in navigator) {
-            // Create a blob URL for the service worker
-            const swBlob = new Blob([swContent], { type: 'application/javascript' });
-            const swURL = URL.createObjectURL(swBlob);
+            });
             
-            // Note: In production, you would have an actual sw.js file
-            // For this demo, we're showing what the content would be
-            console.log('Service Worker content created. In production, save this as sw.js:', swContent);
+            document.getElementById('login-form').addEventListener('submit', handleLogin);
+            document.getElementById('signup-form').addEventListener('submit', handleSignup);
+            
+            // Update session time every minute
+            setInterval(updateStats, 60000);
+        }
+
+        // Initialize App
+        async function initApp() {
+            try {
+                console.log('Initializing Coptic Learning App...');
+                
+                // Update JSON URL display
+                const jsonUrlEl = document.getElementById('json-url');
+                if (jsonUrlEl) {
+                    jsonUrlEl.textContent = VOCABULARY_JSON_URL;
+                }
+                
+                // Generate manifest dynamically
+                const manifest = {
+                    "name": "Bohairic Coptic Learning App",
+                    "short_name": "Coptic Learn",
+                    "description": "Academic Bohairic Coptic Vocabulary Learning System",
+                    "start_url": "./",
+                    "display": "standalone",
+                    "theme_color": "#8b4513",
+                    "background_color": "#1a1a2e",
+                    "icons": [
+                        {
+                            "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+                            "sizes": "192x192",
+                            "type": "image/png"
+                        }
+                    ]
+                };
+                
+                const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+                const manifestUrl = URL.createObjectURL(manifestBlob);
+                document.getElementById('manifest-link').href = manifestUrl;
+                
+                // Initialize IndexedDB first
+                await initDB();
+                
+                // Load existing data (including from JSON)
+                await loadDataFromDB();
+                
+                // Initialize demo users in DB if not exists
+                for (const email in demoAccounts) {
+                    if (!userProfiles[email]) {
+                        userProfiles[email] = demoAccounts[email];
+                        await saveToIndexedDB('users', demoAccounts[email]);
+                    }
+                }
+                
+                // Ensure filteredVocab is set
+                if (!filteredVocab || filteredVocab.length === 0) {
+                    filteredVocab = [...vocabulary];
+                }
+                currentCardIndex = 0;
+                
+                // Set up event listeners
+                setupEventListeners();
+                setupInstallListeners();
+                
+                // Update UI
+                updateUI();
+                updateFlashcard();
+                displayVocabulary();
+                updateOnlineStatus();
+                updateStats(); // Update statistics display
+                
+                console.log('App initialized successfully with', vocabulary.length, 'vocabulary entries');
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showFileStatus('Error initializing app: ' + error.message, 'error');
+            }
+        }
+
+        // Start the app when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
         }
     </script>
 </body>
